@@ -3,6 +3,7 @@ const exitOnError = require('../utils/exit-on-error');
 const connect = require('../utils/connect');
 const { readFile, writeFile, mkdir } = require('fs').promises;
 const { existsSync } = require('fs');
+const { findWasmFile } = require('../utils/find-wasm');
 
 const { PROJECT_KEY_DIR } = require('../middleware/key-store');
 
@@ -37,7 +38,8 @@ module.exports = {
 
 async function devDeploy(options) {
     await eventtracking.askForConsentIfNeeded(options);
-    const { nodeUrl, helperUrl, masterAccount, wasmFile } = options;
+    const { nodeUrl, helperUrl, masterAccount } = options;
+    const wasmFile = await findWasmFile(options.wasmFile, 'debug');
     if (!helperUrl && !masterAccount) {
         throw new Error('Cannot create account as neither helperUrl nor masterAccount is specified in config for current NODE_ENV (see src/config.js)');
     }

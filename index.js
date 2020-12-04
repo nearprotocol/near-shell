@@ -15,6 +15,7 @@ const capture = require('./utils/capture-login-success');
 
 const inspectResponse = require('./utils/inspect-response');
 const eventtracking = require('./utils/eventtracking');
+const { findWasmFile } = require('./utils/find-wasm');
 
 // TODO: Fix promisified wrappers to handle error properly
 
@@ -30,15 +31,16 @@ exports.clean = async function () {
 };
 
 exports.deploy = async function (options) {
+    let wasmFile = await findWasmFile(options.wasmFile, 'release');
     console.log(
-        `Starting deployment. Account id: ${options.accountId}, node: ${options.nodeUrl}, helper: ${options.helperUrl}, file: ${options.wasmFile}`);
+        `Starting deployment. Account id: ${options.accountId}, node: ${options.nodeUrl}, helper: ${options.helperUrl}, file: ${wasmFile}`);
 
     const near = await connect(options);
     const account = await near.account(options.accountId);
     let prevState = await account.state();
     let prevCodeHash = prevState.code_hash;
     // Deploy with init function and args
-    const txs = [transactions.deployContract(fs.readFileSync(options.wasmFile))];
+    const txs = [transactions.deployContract(fs.readFileSync(wasmFile))];
 
     if (options.initFunction) {
         if (!options.initArgs) {
