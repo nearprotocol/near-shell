@@ -1,6 +1,13 @@
-const { connect: nearConnect } = require('near-api-js');
+const { 
+    connect: nearConnect,
+    multisig: {
+        modIfMultisig,
+    }
+} = require('near-api-js');
+const { options2fa } = require('./2fa');
 
 module.exports = async function connect({ keyStore, ...options }) {
-    // TODO: Avoid need to wrap in deps
-    return await nearConnect({ ...options, deps: { keyStore }});
+    const near = await nearConnect({ ...options, deps: { keyStore }});
+    modIfMultisig(near, options2fa);
+    return near;
 };
