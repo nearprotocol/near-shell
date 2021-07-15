@@ -37,7 +37,7 @@
     "bs58": "^4.0.1",
     "chalk": "^4.0.0",
     "flagged-respawn": "^1.0.1",
-    "is-ci": "^2.0.0",
+    "is-ci": "^3.0.0",
     "jest-environment-node": "^27.0.6",
     "mixpanel": "^0.13.0",
     "ncp": "^2.0.0",
