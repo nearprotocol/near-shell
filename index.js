@@ -186,8 +186,22 @@ exports.viewAccount = async function (options) {
     if (state && state.amount) {
         state['formattedAmount'] = utils.format.formatNearAmount(state.amount);
     }
-    console.log(`Account ${options.accountId}`);
-    console.log(inspectResponse.formatResponse(state));
+    const storageInM=state.storage_usage/1e+6;
+    const storage=storageInM<1?`${storageInM*1000} Kb `:`${storageInM} Mb`;
+    const amount=parseFloat(utils.format.formatNearAmount(`${state.amount}`)).toFixed(1);
+    const accountDetails={
+        [chalk.bold('Account:')]:`${options.accountId} at block ${state.block_height}`,
+        [chalk.bold('Amount:')]:`~${amount} ${chalk.bold('yn')}`,
+        [chalk.bold('Raw Amount:')]:`${state.amount} ${chalk.bold('yn')}`,
+        [chalk.bold('Locked:')]:state.locked,
+        [chalk.bold('Storage:')]:`${storage}`,
+        [chalk.bold('Storage paid at:')]:`${state.storage_paid_at}`,
+        [chalk.bold('Code hash:')]:`'${state.code_hash}'`
+    };
+    for(const property in accountDetails){
+        console.log(property,accountDetails[property]);
+    }
+    console.log(`\nFor more details see https://explorer.testnet.near.org/accounts/${options.accountId}`);
 };
 
 exports.deleteAccount = async function (options) {
